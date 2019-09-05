@@ -1,0 +1,15 @@
+composer create-project --prefer-dist laravel/laravel lengine
+
+Writing lock file
+Generating optimized autoload files
+> Illuminate\Foundation\ComposerScripts::postAutoloadDump
+> @php artisan package:discover --ansi
+Discovered Package: fideloper/proxy
+Discovered Package: laravel/tinker
+Discovered Package: nesbot/carbon
+Discovered Package: nunomaduro/collision
+Package manifest generated successfully.
+> @php artisan key:generate --ansi
+Application key set successfully.
+
+
