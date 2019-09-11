@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('Adminx::layouts.app')
 
 @section('content')
     <div class="container">
         <div class="col-sm-offset-2 col-sm-8">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    New Userx
+                    New Userx {{ $user->test_text }}
                 </div>
 
                 <div class="panel-body">

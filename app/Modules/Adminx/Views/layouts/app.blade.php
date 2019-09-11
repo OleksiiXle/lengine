@@ -32,13 +32,13 @@
 
             <!-- Branding Image -->
             <a class="navbar-brand" href="{{ url('/') }}">
-                Task List
+                Users List
             </a>
-        </div>
 
+        </div>
     </div>
 </nav>
-
+@include('Adminx::layouts.flash_message')
 @yield('content')
 
 <!-- JavaScripts -->

@@ -1,8 +1,9 @@
-@extends('layouts.app')
+@extends('Adminx::layouts.app')
 
 @section('content')
     <div class="container">
-        <!-- Current Tasks -->
+
+    <!-- Current Tasks -->
         @if (count($users) > 0)
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -31,7 +32,7 @@
                                 <td class="table-text"><div>{{ $user->name }}</div></td>
                                 <td class="table-text"><div>{{ $user->email }}</div></td>
                                 <td class="table-text"><div>{{ $user->created_at }}</div></td>
-                                <td class="table-text"><div>{{ $user->updated_at }}</div></td>
+                                <td class="table-text"><div>{{ $user->text_test }}</div></td>
 
                                 <!-- Update Button -->
                                 <td>
