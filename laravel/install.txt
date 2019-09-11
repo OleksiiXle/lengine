@@ -15,3 +15,5 @@ Application key set successfully.
 
 php artisan make:migration create_userx_table --create=userx --path=/app/Modules/Adminx/Migrations
 php artisan migrate --path=/app/Modules/Adminx/Migrations
+
+ php artisan db:seed --class=UserSeeder

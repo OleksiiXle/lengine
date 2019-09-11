@@ -12,7 +12,10 @@ class UserxController extends MainController
 
     public function index()
     {
-        $users = Userx::orderBy('created_at', 'asc')->get();
+        $users = Userx::orderBy('created_at', 'asc')->paginate(15);
+        $r = $users->render();
+        $r = $users->toHtml();// $users->getUrlRange(1,5)
+        $r = $users->items();
         return view('Adminx::userx.index',[
             'users' => $users,
         ]);
