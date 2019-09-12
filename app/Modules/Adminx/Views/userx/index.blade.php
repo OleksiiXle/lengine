@@ -2,6 +2,12 @@
 
 @section('content')
     <div class="container">
+        <div>
+            @widget('gridx', ['params' => 'qwerty1'])
+            lokoko
+            @widget('gridx', ['params' => 'qwerty2'])
+            @widget('gridx', ['params' => 'qwerty3'])
+        </div>
 
     <!-- Current Tasks -->
         @if (count($users) > 0)

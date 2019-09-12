@@ -176,7 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Modules\ModulesServiceProvider::class,
-
+        App\Providers\WidgetServiceProvider::class,
     ],
 
     /*
