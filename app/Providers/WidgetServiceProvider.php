@@ -25,6 +25,8 @@ class WidgetServiceProvider extends ServiceProvider
          * app\Widgets\view
          */
         $this->loadViewsFrom(app_path() .'/Widgets/view', 'Widgets');
+        $this->loadRoutesFrom(app_path() . '/Widgets/Routes/routes.php');
+
     }
 
     public function register()

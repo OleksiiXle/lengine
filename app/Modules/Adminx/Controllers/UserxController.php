@@ -3,8 +3,9 @@
 namespace App\Modules\Adminx\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Adminx\Models\gridComponent\UserxFilter;
+use App\Modules\Adminx\Models\gridComponent\UserxGenerator;
 use App\Modules\Adminx\Models\Userx;
-use App\Modules\Adminx\Requests\SaveUserRequest;
 use Illuminate\Support\Facades\Validator;
 
 class UserxController extends MainController
@@ -12,12 +13,70 @@ class UserxController extends MainController
 
     public function index()
     {
-        $users = Userx::orderBy('created_at', 'asc')->paginate(15);
-        $r = $users->render();
-        $r = $users->toHtml();// $users->getUrlRange(1,5)
-        $r = $users->items();
+        $r=1;
+
+        $params = [
+            'gridxId' => 'userxGrid',
+            'modelClass' => 'App\Modules\Adminx\Models\Userx',
+            'filterView' => 'Adminx::userx._filter_userx',
+            'pagination' => 5,
+            'tableOptions' => [
+                'class' => 'table table-bordered table-hover table-condensed',
+                'style' => ' width: 100%; table-layout: fixed;',
+            ],
+            'headerOptions' => [
+                'class' => 'headerOptions',
+                'style' => 'color: blue;'
+            ],
+            'rowOptions' => [
+                'class' => 'rowOptions',
+                'style' => 'color: black;'
+            ],
+            'colOptions' => [
+                'rowOptions' => [
+                    'class' => 'colOptions',
+                    'style' => 'color: blue;'
+                ],
+            ],
+            'columns' => [
+                [
+                    'attribute'=>'id',
+                    'draw' => 'no',
+                ],
+                [
+                    'attribute'=>'name',
+                ],
+                [
+                    'attribute'=>'email',
+                    'headerOptions' => [
+                        'class' => 'qwerty',
+                        'style' => 'color: green;'
+                    ],
+                    'contentOptions' => [
+                        'class' => 'asdfg',
+                        'style' => 'color: brown;'
+                    ],
+                    'label'=>'dfsdfsdfsdf',
+                    'content'=>function($data){
+                        $r=1;
+                        return (isset($data->email)) ? $data->email . '__qwerty' : '';
+                    },
+                ],
+                [
+                    'attribute'=>'control',
+                    'label'=>'',
+                    'content'=>function($data){
+                        $ret='<a class="btn btn-primary" href="userx/update/' . $data->id . '">Update</a>';
+                        return $ret;
+                    },
+                ],
+            ]
+        ];
+        $generator = new UserxGenerator($params);
+
+
         return view('Adminx::userx.index',[
-            'users' => $users,
+            'generator' => $generator,
         ]);
     }
 
