@@ -13,9 +13,9 @@
 </script>
 <div class="xCard">
     <div class="row">
-        <div class="col-md-10">dfgdfg</div>
-        <div class="col-md-2" >
-            <a onclick="filterShowHide(this)" title="Фильтр">dfg
+        <div class="col-md-11">dfgdfg</div>
+        <div class="col-md-1" align="right">
+            <a onclick="filterShowHide(this)" title="Фильтр" style="cursor: pointer;">
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
         </div>

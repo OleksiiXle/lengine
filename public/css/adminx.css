@@ -1,3 +1,6 @@
+a, button{
+    cursor: pointer;
+}
 /*********************************************************************************** лайаут */
 .xLayoutHeader{
     background-color: #bdbdbd;
