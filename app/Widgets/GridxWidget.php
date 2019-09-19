@@ -8,7 +8,7 @@ class GridxWidget  implements ContractWidget
 {
 
     private $id;
-    public $generator;
+    private $generator;
 
     public $gridxId;
     public $modelClass;
@@ -26,6 +26,9 @@ class GridxWidget  implements ContractWidget
     public $filter;
     public $tableBody;
 
+    public $paginationInfo;
+    public $paginationButtons;
+
     /**
      * @var int a counter used to generate [[id]] for widgets.
      * @internal
@@ -35,19 +38,23 @@ class GridxWidget  implements ContractWidget
 
     public function __construct($generator)
     {
-        $this->gridxId = $generator->gridxId;
-        $this->modelClass = $generator->modelClass;
-        $this->filterView = $generator->filterView;
-        $this->pagination = $generator->pagination;
-        $this->tableOptions = $generator->tableOptions;
-        $this->headerOptions = $generator->headerOptions;
-        $this->rowOptions = $generator->rowOptions;
-        $this->colOptions = $generator->colOptions;
-        $this->columns = $generator->columns;
+        $gridxId = $generator->gridxId;
+        $modelClass = $generator->modelClass;
+        $filterView = $generator->filterView;
+        $pagination = $generator->pagination;
+        $tableOptions = $generator->tableOptions;
+        $headerOptions = $generator->headerOptions;
+        $rowOptions = $generator->rowOptions;
+        $colOptions = $generator->colOptions;
+        $columns = $generator->columns;
 
-        $this->header = $generator->getHeader();
-        $this->filter = $generator->getFilter();
-        $this->tableBody = $generator->getTableBody();
+        $header = $generator->getHeader();
+        $filter = $generator->getFilter();
+        $tableBody = $generator->getTableBody();
+        $paginationInfo = $generator->getPaginationInfo();
+
+        $this->generator = $generator;
+
         if ($this->id === null) {
             $this->id = 'x' . static::$counter++;
         }
@@ -62,18 +69,21 @@ class GridxWidget  implements ContractWidget
     public function execute(){
         return view('Widgets::gridx.gridx', [
             'id' => $this->id,
-            'gridxId' => $this->gridxId,
-            'modelClass' => $this->modelClass,
-            'filterView' => $this->filterView,
-            'pagination' => $this->pagination,
-            'tableOptions' => $this->tableOptions,
-            'headerOptions' => $this->headerOptions,
-            'rowOptions' => $this->rowOptions,
-            'colOptions' => $this->colOptions,
-            'columns' => $this->columns,
-            'header' => $this->header,
-            'filter' => $this->filter,
-            'tableBody' => $this->tableBody,
+            'url' => $this->generator->url,
+            'gridxId' => $this->generator->gridxId,
+            'modelClass' => $this->generator->modelClass,
+            'filterView' => $this->generator->filterView,
+            'pagination' => $this->generator->pagination,
+            'tableOptions' => $this->generator->tableOptions,
+            'headerOptions' => $this->generator->headerOptions,
+            'rowOptions' => $this->generator->rowOptions,
+            'colOptions' => $this->generator->colOptions,
+            'columns' => $this->generator->columns,
+            'header' => $this->generator->getHeader(),
+            'filter' => $this->generator->getFilter(),
+            'tableBody' => $this->generator->getTableBody(),
+            'paginationInfo' => $this->generator->getPaginationInfo(),
+            'paginationButtons' => $this->generator->getPaginateButtons(),
         ]);
     }
 }

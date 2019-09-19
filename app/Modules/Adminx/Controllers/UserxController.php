@@ -3,7 +3,6 @@
 namespace App\Modules\Adminx\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Adminx\Models\gridComponent\UserxFilter;
 use App\Modules\Adminx\Models\gridComponent\UserxGenerator;
 use App\Modules\Adminx\Models\Userx;
 use Illuminate\Support\Facades\Validator;
@@ -17,9 +16,10 @@ class UserxController extends MainController
 
         $params = [
             'gridxId' => 'userxGrid',
+            'url' => '/adminx/userx',
             'modelClass' => 'App\Modules\Adminx\Models\Userx',
             'filterView' => 'Adminx::userx._filter_userx',
-            'pagination' => 5,
+            'pagination' => 6,
             'tableOptions' => [
                 'class' => 'table table-bordered table-hover table-condensed',
                 'style' => ' width: 100%; table-layout: fixed;',
@@ -72,12 +72,21 @@ class UserxController extends MainController
                 ],
             ]
         ];
-        $generator = new UserxGenerator($params);
+        if ($this->requestx->ajax()){
+            $data = $this->requestx->all();
+            $params['offset'] = $data['offset'];
+            $params['page'] = $data['page'];
+            $generator = new UserxGenerator($params);
+            $ret = $generator->getGridRefreshData();
+            return json_encode($ret);
+        } else {
+            $generator = new UserxGenerator($params);
+            return view('Adminx::userx.index',[
+                'generator' => $generator,
+            ]);
+        }
 
 
-        return view('Adminx::userx.index',[
-            'generator' => $generator,
-        ]);
     }
 
     public function update($id=0)

@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Blade;
 
 class WidgetServiceProvider extends ServiceProvider
 {
+    /**
+     * Задаёт отложена ли загрузка провайдера.
+     *
+     * @var bool
+     */
+  //  protected $defer = true;
+
     public function boot()
     {
         /*
@@ -34,5 +41,12 @@ class WidgetServiceProvider extends ServiceProvider
         App::singleton('widget', function(){
             return new \App\Widgets\Widget();
         });
+        /*
+    $this->app->bind('HelpSpot\API', function ($app) {
+    return new HelpSpot\API($app->make('HttpClient'));
+
+    $api = new HelpSpot\API(new HttpClient);
+    $this->app->instance('HelpSpot\API', $api);
+    });         */
     }
 }

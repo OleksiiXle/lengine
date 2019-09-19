@@ -6,6 +6,7 @@
         ], function(){
             Route::get('/adminx', ['uses' => 'AdminxController@index']);
             Route::get('/adminx/userx', ['uses' => 'UserxController@index']);
+            Route::post('/adminx/userx', ['uses' => 'UserxController@index']);
             Route::get('/adminx/userx/update/{id}', ['uses' => 'UserxController@update']);
             Route::post('/adminx/userx/update/{id}', ['uses' => 'UserxController@update']);
             Route::get('/adminx/userx/delete/{id}', ['uses' => 'UserxController@delete']);

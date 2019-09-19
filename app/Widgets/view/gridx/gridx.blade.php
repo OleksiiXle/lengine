@@ -1,5 +1,8 @@
+<link href="{{ asset('css/gridx.css') }}" rel="stylesheet" />
+
 <script>
     var _modelClass = '<?Php echo $modelClass;?>' ;
+    var _url = '<?Php echo $url;?>' ;
     var _gridxId = '<?Php echo $gridxId;?>' ;
     var _pagination = <?Php echo $pagination;?> ;
     var _tableOptions = {!! json_encode($tableOptions) !!};
@@ -9,11 +12,17 @@
     var _columns = {!! json_encode($columns) !!};
     var _header = {!! json_encode($header) !!};
     var _tableBody = {!! json_encode($tableBody) !!};
+    var _paginationInfo = '<?Php echo $paginationInfo;?>' ;
+    var _paginationButtons = {!! json_encode($paginationButtons) !!};
 
 </script>
 <div class="xCard">
     <div class="row">
-        <div class="col-md-11">dfgdfg</div>
+        <div class="col-md-11">
+            <span id="{{$gridxId}}_paginationInfo">
+                            {{ $paginationInfo }}
+            </span>
+        </div>
         <div class="col-md-1" align="right">
             <a onclick="filterShowHide(this)" title="Фильтр" style="cursor: pointer;">
                 <span class="glyphicon glyphicon-chevron-down"></span>

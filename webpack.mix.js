@@ -10,8 +10,11 @@ const mix = require('laravel-mix');
  | file for the application as well as bundling up all the JS files.
  |
  */
-
+/*
 mix.js('resources/js/appx.js', 'public/js/default.js')
     .sass('resources/sass/app.scss', 'public/css/default.css');
 
 mix.copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/','public/fonts/bootstrap');
+*/
+mix.copy('app/Widgets/Resources/js/gridx.js', 'public/js/gridx.js')
+.copy('app/Widgets/Resources/css/gridx.css', 'public/css/gridx.css');
