@@ -4,7 +4,7 @@ let paginationButtons;
 let columnOptions = {};
 
 let queryParams = {
-    '_token' : $('meta[name="csrf-token"]').attr('content'),
+  //  '_token' : $('meta[name="csrf-token"]').attr('content'),
     'page' : 0,
     'offset' : 0,
     'filter' : {},
@@ -14,7 +14,7 @@ let queryParams = {
 
 
 function init() {
-  //  alert('init');
+   // alert('init');
     columnOptions = getColumnOptions(_columns);
     headerArea = getHeader(_headerOptions, _columns);
     tableBodyArea = getTableBody(_rowOptions, _colOptions, _tableBody, columnOptions);
@@ -137,7 +137,7 @@ function getPaginationButtons(paginationButtons) {
             + '>'
             + attribute['label']
             + '</button>';
-        console.log(attribute);
+      //  console.log(attribute);
     });
     return '<span>' + btns + '</span>';
 }
@@ -180,6 +180,10 @@ function changePage(page, offset ) {
     console.log( page + ' ' + offset);
     queryParams.page = page;
     queryParams.offset = offset;
+    queryParams.sort = {
+        'd1' : 'lokoko' ,
+        'd2' : 'best'
+    };
     refreshGrid();
 }
 
@@ -187,7 +191,7 @@ function refreshGrid() {
     console.log(queryParams);
 
     return $.ajax({
-        type: 'POST',
+        type: 'GET',
         dataType: 'json',
         url: _url,
         data: queryParams,
@@ -198,6 +202,9 @@ function refreshGrid() {
             paginationButtons = getPaginationButtons(response['paginationButtons']);
             drawGrid(_gridxId, headerArea, tableBodyArea, paginationButtons, _tableOptions);
             $("#" + _gridxId + '_paginationInfo').html(response['paginationInfo']);
+           // window.location = "?page=" + queryParams.page + "&offset=" + queryParams.offset;
+            window.history.pushState(null, null, _url + "?page=" + queryParams.page + "&offset=" + queryParams.offset
+            + '&sort[d1]=' + queryParams.sort['d1']);
 
         },
         error: function (jqXHR, error, errorThrown) {

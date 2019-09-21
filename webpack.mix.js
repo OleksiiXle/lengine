@@ -18,3 +18,6 @@ mix.copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/','public/fonts/boo
 */
 mix.copy('app/Widgets/Resources/js/gridx.js', 'public/js/gridx.js')
 .copy('app/Widgets/Resources/css/gridx.css', 'public/css/gridx.css');
+
+mix.browserSync('lengine.dev');
+
