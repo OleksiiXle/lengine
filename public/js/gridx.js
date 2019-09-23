@@ -1,7 +1,12 @@
+const SORT_NONE = ' *';
+const SORT_ASC = ' &#8593';
+const SORT_DESC = ' &#8595';
+
 let headerArea;
 let tableBodyArea;
 let paginationButtons;
 let columnOptions = {};
+
 
 let baseUrl = window.location.href.split('?')[0];
 
@@ -16,50 +21,76 @@ let queryParams = {
 
 
 function init() {
+   // console.log(_sortOptions);
 
    // alert('init');
+
     columnOptions = getColumnOptions(_columns);
-    headerArea = getHeader(_headerOptions, _columns);
+    headerArea = getHeader(_columns);
     tableBodyArea = getTableBody(_rowOptions, _colOptions, _tableBody, columnOptions);
     paginationButtons = getPaginationButtons(_paginationButtons);
-    drawGrid(_gridxId, headerArea, tableBodyArea, paginationButtons, _tableOptions);
+    drawGrid(_gridxId, headerArea, tableBodyArea, paginationButtons);
   //  console.log($("#" + _gridxId));
 }
 
 //----------------------------------------------------------------------------------- init functions
-function getHeader(headerOptions, columns) {
-    let ret = hText = hClass = hStyle = draw = "";
-    hClass = (typeof(headerOptions) != "undefined" && typeof(headerOptions.class) != "undefined" )
-        ? "class='" + headerOptions.class + "'" : "";
-    hStyle = (typeof(headerOptions) != "undefined" && typeof(headerOptions.style) != "undefined" )
-        ? "style='" + headerOptions.style + ";'" : "";
+function getHeader(columns) {
+    let ret = hText = hcClass = ownClass = ownStyle = hcStyle = draw = "";
+    let attr = '';
+    let sortOptions = {};
+    let sortClass = '';
+    let tdStr = '';
 
-    ret = "<thead " + hClass + ' ' + hStyle + "><tr>";
+    let colHeaderClass = colHeaderStyle = "";
+    colHeaderClass = (typeof(_colOptions.headerOptions) != "undefined" && typeof(_colOptions.headerOptions.class) != "undefined" )
+        ? "class='" + _colOptions.headerOptions.class + "'" : "";
+    colHeaderStyle = (typeof(_colOptions.headerOptions) != "undefined" && typeof(_colOptions.headerOptions.style) != "undefined" )
+        ? "style='" + _colOptions.headerOptions.style + ";'" : "";
+
     $(columns).each(function (i, v) {
         //---------------------------
-        hClass = (typeof(v.contentOptions) != "undefined" && typeof(v.contentOptions.class) != "undefined" )
-            ? "class='" + v.contentOptions.class + "'" : "";
-        hStyle = (typeof(v.headerOptions) != "undefined" && typeof(v.contentOptions.style) != "undefined" )
-            ? "style='" + v.contentOptions.style + ";'" : "";
+        attr = v.attribute;
+
+        draw = "yes";
+        hcClass = (typeof(v.headerOptions) != "undefined" && typeof(v.headerOptions.class) != "undefined" )
+            ? "class='" + v.contentOptions.class + "'" : colHeaderClass;
+        hcStyle = (typeof(v.headerOptions) != "undefined" && typeof(v.headerOptions.style) != "undefined" )
+            ? "style='" + v.contentOptions.style + ";'" : colHeaderStyle;
+
         if (typeof(v.draw) != "undefined"){
-
+            draw = v.draw;
         }
-
         //---------------------------
-        if (draw == 'yes'){
+        if (draw != 'no'){
             hText = (typeof(v.label) != 'undefined' ) ? v.label : v.attribute;
-            hClass = (typeof(v.headerOptions) != "undefined" && typeof(v.headerOptions.class) != "undefined" )
-                ? "class='" + v.headerOptions.class + "'" : "";
-            hStyle = (typeof(v.headerOptions) != "undefined" && typeof(v.headerOptions.style) != "undefined" )
-                ? "style='" + v.headerOptions.style + ";'" : "";
+            ownClass = (typeof(v.headerOptions) != "undefined" && typeof(v.headerOptions.class) != "undefined" )
+                ? "class='" + v.headerOptions.class + "'" : hcClass;
+            ownStyle = (typeof(v.headerOptions) != "undefined" && typeof(v.headerOptions.style) != "undefined" )
+                ? "style='" + v.headerOptions.style + ";'" : hcStyle;
 
-            ret += "<td " + hClass + ' ' + hStyle + ">" + hText + "</td>";
+            if (typeof(_sortOptions[attr]) != 'undefined'){
+            //    console.log(_sortOptions[attr]);
+                sortOptions = {};
+                $.each(_sortOptions[attr], function (index, value) {
+                    sortOptions[index] = value;
+                });
+              //  console.log(sortOptions);
+                sortClass = (ownClass.length > 0) ? ownClass.substring(0, ownClass.length - 1) + " sortable'" : 'class="sortable"';
+                tdStr= "<td " + sortClass + ' ' + ownStyle
+                    + ' data-status="nosort"'
+                    + ' data-asc="' + sortOptions['asc'] + '"'
+                    + ' data-desc="' + sortOptions['desc'] + '"'
+                    + ' onclick="changeSort(this);"'
+                    + ">" + hText + SORT_NONE + "</td>";
+
+            } else {
+                tdStr= "<td " + ownClass + ' ' + ownStyle
+                    + ">" + hText + "</td>";
+            }
+            ret +=tdStr;
         }
     });
-    ret += "</tr></thead>";
     return ret;
-   // console.log(headerArea);
-   // console.log(colOptions);
 }
 
 function getColumnOptions(columns) {
@@ -97,17 +128,17 @@ function getTableBody(rowOptions, colOptions, tableBody, columnOptions ) {
     let ownClass = "";
     let ownStyle = "";
 
-    ret = "<tbody>";
+   // ret = "<tbody>";
     rowClass = (typeof(rowOptions) != "undefined" && typeof(rowOptions.class) != "undefined" )
         ? "class='" + rowOptions.class + "'" : "";
     rowStyle = (typeof(rowOptions) != "undefined" && typeof(rowOptions.style) != "undefined" )
         ? "style='" + rowOptions.style + ";'" : "";
 
 
-    colClass = (typeof(colOptions) != "undefined" && typeof(colOptions.class) != "undefined" )
-        ? "class='" + colOptions.class + "'" : "";
-    colStyle = (typeof(colOptions) != "undefined" && typeof(colOptions.style) != "undefined" )
-        ? "style='" + colOptions.style + ";'" : "";
+    colClass = (typeof(_colOptions.contentOptions) != "undefined" && typeof(_colOptions.contentOptions.class) != "undefined" )
+        ? "class='" + _colOptions.contentOptions.class + "'" : "";
+    colStyle = (typeof(_colOptions.contentOptions) != "undefined" && typeof(_colOptions.contentOptions.style) != "undefined" )
+        ? "style='" + _colOptions.contentOptions.style + ";'" : "";
 
     $(tableBody).each(function (i, row) {
         ret += "<tr " + rowClass + ' ' + rowStyle + ">";
@@ -118,13 +149,12 @@ function getTableBody(rowOptions, colOptions, tableBody, columnOptions ) {
                 ownStyle = (columnOptions[attr].style.length > 0 )
                     ? columnOptions[attr].style : colStyle;
                 ret += "<td " + ownClass + " " + ownStyle + ">" + value + "</td>";
-                //  console.log(col);
             }
         });
         ret += "</tr>";
     });
 
-    ret += "</tbody>";
+   // ret += "</tbody>";
     return ret;
 }
 
@@ -140,24 +170,15 @@ function getPaginationButtons(paginationButtons) {
             + '>'
             + attribute['label']
             + '</button>';
-      //  console.log(attribute);
     });
     return '<span>' + btns + '</span>';
 }
 
 //------------------------------------------------------------------------------------ draw functions
-function drawGrid(gridxId, headerArea, tableBodyArea, paginationButtons, tableOptions) {
-    let tClass = (typeof(tableOptions) != "undefined" && typeof(tableOptions.class) != "undefined" )
-        ? "class='" + tableOptions.class + "'" : "";
-    let tStyle = (typeof(tableOptions) != "undefined" && typeof(tableOptions.style) != "undefined" )
-        ? "style='" + tableOptions.style + ";'" : "";
-
-    let grid  = "<table " + tClass + ' ' + tStyle + ">"
-            + headerArea
-            + tableBodyArea
-            + "</table>"
-            + paginationButtons;
-    $("#" + gridxId).html(grid);
+function drawGrid(gridxId, headerArea, tableBodyArea, paginationButtons ) {
+    $("#" + gridxId + "_tableHeader").html(headerArea);
+    $("#" + gridxId + "_tableBody").html(tableBodyArea);
+    $("#" + gridxId + "_paginationButtons").html(paginationButtons);
 }
 
 //------------------------------------------------------------------------------------ action functions
@@ -183,16 +204,13 @@ function changePage(page, offset ) {
   //  console.log( page + ' ' + offset);
     queryParams.page = page;
     queryParams.offset = offset;
-    queryParams.sort = {
-      //  'name' : 'asc' ,
-     //   'email' : 'desc'
-    };
     refreshGrid();
 }
 
 function refreshGrid() {
  //   console.log(queryParams);
- //   var t = getQueryParamsStr();
+  //  var t = getQueryParamsStr();
+  //  console.log(t);
   //  return true;
 
     return $.ajax({
@@ -201,24 +219,14 @@ function refreshGrid() {
         url: baseUrl,
         data: queryParams,
         success: function (response) {
-         //   alert('ok');
            // console.log(response);
             tableBodyArea = getTableBody(_rowOptions, _colOptions, response['tableBody'], columnOptions);
             paginationButtons = getPaginationButtons(response['paginationButtons']);
-            drawGrid(_gridxId, headerArea, tableBodyArea, paginationButtons, _tableOptions);
+            $("#" + _gridxId + "_tableBody").html(tableBodyArea);
+            $("#" + _gridxId + "_paginationButtons").html(paginationButtons);
             $("#" + _gridxId + '_paginationInfo').html(response['paginationInfo']);
             $("#" + _gridxId + '_filterContent').html(response['filterContent']);
-           // window.location = "?page=" + queryParams.page + "&offset=" + queryParams.offset;
-         //   console.log(baseUrl);
-
-          //  var  u = encodeURI(_url + "?page=" + queryParams.page + "&offset=" + queryParams.offset);
-            //    + '&sort[d1]=' + queryParams.sort['d1']  + '&sort[d2]=' + queryParams.sort['d2']);
             window.history.pushState(null, null, getQueryParamsStr());
-            /*
-                       window.history.pushState(null, null, _url + "?page=" + queryParams.page + "&offset=" + queryPar + queryParams.offset
-                       + '&sort[d1]=' + queryParams.sort['d1']  + '&sort[d2]=' + queryParams.sort['d2']);
-                       */
-
         },
         error: function (jqXHR, error, errorThrown) {
             console.log(jqXHR);
@@ -233,9 +241,7 @@ function applyFilter() {
     let empty = true;
     queryParams.page = 1;
     queryParams.offset = 0;
-
     queryParams.filter = {};
-   // console.log(fields);
     $.each(fields, function () {
         switch (typeof this.value) {
             case 'string':
@@ -245,18 +251,18 @@ function applyFilter() {
                 empty = toString(this.value).length == 0;
                 break;
         }
-       // console.log(this.name + ' = ' + this.value);
         if (!empty){
             queryParams.filter[this.name] = this.value;
         }
     });
-   // console.log(queryParams.filter);
     refreshGrid();
 }
 
 function resetFilter() {
     $(".filterData").val(null);
     queryParams.filter = {};
+    queryParams.page = 1;
+    queryParams.offset = 0;
     refreshGrid();
 }
 
@@ -319,6 +325,34 @@ function getQueryParamsStr() {
 //    console.log(ret);
 //   console.log(u);
     return u;
+
+}
+
+function changeSort(item) {
+    //console.log(queryParams);
+    queryParams.page = 1;
+    queryParams.offset = 0;
+
+    let buf = $(item).html();
+    switch (item.dataset.status) {
+        case 'nosort':
+            item.dataset.status = 'asc';
+            $(item).html(buf.substring(0, buf.length - 1) + SORT_ASC );
+            queryParams.sort[item.dataset.asc] = 'asc';
+            break;
+        case 'asc':
+            item.dataset.status = 'desc';
+            $(item).html(buf.substring(0, buf.length - 1) + SORT_DESC );
+            queryParams.sort[item.dataset.desc] = 'desc';
+            break;
+        case 'desc':
+            item.dataset.status = 'nosort';
+            $(item).html(buf.substring(0, buf.length - 1) + SORT_NONE );
+            delete queryParams.sort[item.dataset.desc];
+            break;
+    }
+  //  console.log(queryParams);
+    refreshGrid();
 
 }
 

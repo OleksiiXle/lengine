@@ -16,27 +16,12 @@ class UserxController extends MainController
 
         $params = [
             'gridxId' => 'userxGrid',
-            'url' => '/adminx/userx',
             'modelClass' => 'App\Modules\Adminx\Models\Userx',
             'filterView' => 'Adminx::userx._filter_userx',
             'pagination' => 6,
             'tableOptions' => [
                 'class' => 'table table-bordered table-hover table-condensed',
                 'style' => ' width: 100%; table-layout: fixed;',
-            ],
-            'headerOptions' => [
-                'class' => 'headerOptions',
-                'style' => 'color: blue;'
-            ],
-            'rowOptions' => [
-                'class' => 'rowOptions',
-                'style' => 'color: black;'
-            ],
-            'colOptions' => [
-                'rowOptions' => [
-                    'class' => 'colOptions',
-                    'style' => 'color: blue;'
-                ],
             ],
             'columns' => [
                 [
@@ -48,15 +33,9 @@ class UserxController extends MainController
                 ],
                 [
                     'attribute'=>'email',
-                    'headerOptions' => [
-                        'class' => 'qwerty',
-                        'style' => 'color: green;'
-                    ],
                     'contentOptions' => [
-                        'class' => 'asdfg',
                         'style' => 'color: brown;'
                     ],
-                    'label'=>'dfsdfsdfsdf',
                     'content'=>function($data){
                         $r=1;
                         return (isset($data->email)) ? $data->email . '__qwerty' : '';
@@ -70,7 +49,17 @@ class UserxController extends MainController
                         return $ret;
                     },
                 ],
-            ]
+            ],
+            'sortOptions' => [
+              'name' => [
+                  'asc' => 'name',
+                  'desc' => 'name',
+              ],
+              'email' => [
+                  'asc' => 'email',
+                  'desc' => 'email',
+              ],
+            ],
         ];
 
         $requestParams = $this->requestx->all();

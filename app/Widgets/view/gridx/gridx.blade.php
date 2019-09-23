@@ -2,16 +2,15 @@
 
 <script>
     var _modelClass = '<?Php echo $modelClass;?>' ;
-    var _url = '<?Php echo $url;?>' ;
     var _gridxId = '<?Php echo $gridxId;?>' ;
     var _pagination = <?Php echo $pagination;?> ;
-    var _tableOptions = {!! json_encode($tableOptions) !!};
-    var _headerOptions = {!! json_encode($headerOptions) !!};
     var _rowOptions = {!! json_encode($rowOptions) !!};
     var _colOptions = {!! json_encode($colOptions) !!};
     var _columns = {!! json_encode($columns) !!};
     var _header = {!! json_encode($header) !!};
     var _tableBody = {!! json_encode($tableBody) !!};
+    var _sort = {!! json_encode($sort) !!};
+    var _sortOptions = {!! json_encode($sortOptions) !!};
     var _paginationInfo = '<?Php echo $paginationInfo;?>' ;
     var _paginationButtons = {!! json_encode($paginationButtons) !!};
     var _filterContent = '<?Php echo $filterContent;?>' ;
@@ -41,6 +40,16 @@
     </div>
 </div>
 <div class="xCard">
+    <table id="{{ $gridxId . '_table'}}" class="{{$tableClass}}" style="{{$tableStyle}}">
+        <thead id="{{ $gridxId . '_tableHeader'}}" class="{{$headerClass}}" style="{{$headerStyle}}" >
+
+        </thead>
+        <tbody id="{{ $gridxId . '_tableBody'}}">
+
+        </tbody>
+    </table>
+    <div id={{ $gridxId . '_paginationButtons'}}></div>
+
     <div id={{ $gridxId }}></div>
 </div>
 

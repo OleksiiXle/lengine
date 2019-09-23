@@ -1,3 +1,16 @@
 .activeButton{
     background-color: #0b2e13;
 }
+
+.headerColumn{
+    font-weight: bold;
+    color: blue;
+}
+
+.contentColumn{
+    color: black;
+}
+
+.sortable{
+    cursor: pointer;
+}

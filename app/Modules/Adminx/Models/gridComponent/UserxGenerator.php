@@ -9,7 +9,6 @@ class UserxGenerator
     //------------------------------------------- constructor attributes
     public $gridxId;
     public $modelClass = '';
-    public $url = '';
     public $filterView = '';
     public $pagination = 0;
     public $paginationFrame = 6;
@@ -17,13 +16,19 @@ class UserxGenerator
         'class' => 'table table-bordered table-hover table-condensed',
         'style' => ' width: 100%; table-layout: fixed;',
     ];
-    public $headerOptions = [];
+    public $headerOptions = [
+    ];
     public $rowOptions = [];
     public $colOptions = [
-        'headerOptions' => ['style' => 'color: blue'],
-        'contentOptions' => ['style' => 'color: black'],
+        'headerOptions' => [
+            'class' => 'headerColumn',
+        ],
+        'contentOptions' => [
+            'class' => 'contentColumn'
+        ],
     ];
     public $columns = [];
+    public $sortOptions = [];
 
     public $requestParams = [];
     public $filterData = [];
@@ -56,12 +61,22 @@ class UserxGenerator
 
         $this->loadData($requestParams);
 
+        /*
+        if (!empty($requestParams['page'])){
+            $this->page = $requestParams['page'];
+        }
+
+        if (!empty($requestParams['offset'])){
+            $this->offset = $requestParams['offset'];
+        }
+        */
+
         if ( (isset($requestParams['filter']))){
             $this->loadData($requestParams['filter']);
         }
 
         if ( (isset($requestParams['sort']))){
-            $this->loadData($requestParams['sort']);
+            $this->sort = $requestParams['sort'];
         }
      //  $this->loadData($this->paginationData);
     //    $this->loadData($this->filterData);
@@ -145,6 +160,7 @@ class UserxGenerator
        // $this->getQueryWhere();
      //   $this->query->orderBy('name','asc');
      //   $this->query->orderBy('email','desc');
+        $r=1;
 
         if (!empty($this->sort)){
             foreach ($this->sort as $key => $value){

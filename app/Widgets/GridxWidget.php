@@ -29,6 +29,13 @@ class GridxWidget  implements ContractWidget
     public $paginationInfo;
     public $paginationButtons;
 
+    public $tableClass;
+    public $tableStyle;
+    public $headerClass;
+    public $headerStyle;
+
+
+
     /**
      * @var int a counter used to generate [[id]] for widgets.
      * @internal
@@ -53,6 +60,21 @@ class GridxWidget  implements ContractWidget
         $tableBody = $generator->getTableBody();
         $paginationInfo = $generator->getPaginationInfo();
 
+        $this->tableClass = (!empty($generator->tableOptions) && !empty($generator->tableOptions['class']))
+            ? $generator->tableOptions['class']
+            :"";
+        $this->tableStyle = (!empty($generator->tableOptions) && !empty($generator->tableOptions['style']))
+            ? $generator->tableOptions['style']
+            :'';
+        $this->headerClass = (!empty($generator->headerOptions) && !empty($generator->headerOptions['class']))
+            ? 'class="' . $generator->tableOptions['class'] . '"'
+            :'';
+        $this->headerStyle = (!empty($generator->headerOptions) && !empty($generator->headerOptions['style']))
+            ? 'style="' . $generator->tableOptions['style'] . '"'
+            :'';
+
+
+
         $this->generator = $generator;
 
         if ($this->id === null) {
@@ -69,13 +91,10 @@ class GridxWidget  implements ContractWidget
     public function execute(){
         return view('Widgets::gridx.gridx', [
             'id' => $this->id,
-            'url' => $this->generator->url,
             'gridxId' => $this->generator->gridxId,
             'modelClass' => $this->generator->modelClass,
             'filterView' => $this->generator->filterView,
             'pagination' => $this->generator->pagination,
-            'tableOptions' => $this->generator->tableOptions,
-            'headerOptions' => $this->generator->headerOptions,
             'rowOptions' => $this->generator->rowOptions,
             'colOptions' => $this->generator->colOptions,
             'columns' => $this->generator->columns,
@@ -85,6 +104,15 @@ class GridxWidget  implements ContractWidget
             'paginationInfo' => $this->generator->getPaginationInfo(),
             'paginationButtons' => $this->generator->getPaginateButtons(),
             'filterContent' => $this->generator->getFilterContent(),
+            'sortOptions' => $this->generator->sortOptions,
+            'sort' => $this->generator->sort,
+
+            'tableClass' => $this->tableClass,
+            'tableStyle' => $this->tableStyle,
+            'headerClass' => $this->headerClass,
+            'headerStyle' => $this->headerStyle,
+
+
         ]);
     }
 }
