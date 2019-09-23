@@ -3,10 +3,12 @@ let tableBodyArea;
 let paginationButtons;
 let columnOptions = {};
 
+let baseUrl = window.location.href.split('?')[0];
+
 let queryParams = {
   //  '_token' : $('meta[name="csrf-token"]').attr('content'),
-    'page' : 0,
-    'offset' : 0,
+    'page' : '',
+    'offset' : '',
     'filter' : {},
     'sort' : {}
 };
@@ -14,6 +16,7 @@ let queryParams = {
 
 
 function init() {
+
    // alert('init');
     columnOptions = getColumnOptions(_columns);
     headerArea = getHeader(_headerOptions, _columns);
@@ -177,34 +180,44 @@ function filterShowHide(button) {
 }
 
 function changePage(page, offset ) {
-    console.log( page + ' ' + offset);
+  //  console.log( page + ' ' + offset);
     queryParams.page = page;
     queryParams.offset = offset;
     queryParams.sort = {
-        'd1' : 'lokoko' ,
-        'd2' : 'best'
+      //  'name' : 'asc' ,
+     //   'email' : 'desc'
     };
     refreshGrid();
 }
 
 function refreshGrid() {
-    console.log(queryParams);
+ //   console.log(queryParams);
+ //   var t = getQueryParamsStr();
+  //  return true;
 
     return $.ajax({
         type: 'GET',
         dataType: 'json',
-        url: _url,
+        url: baseUrl,
         data: queryParams,
         success: function (response) {
          //   alert('ok');
-            console.log(response);
+           // console.log(response);
             tableBodyArea = getTableBody(_rowOptions, _colOptions, response['tableBody'], columnOptions);
             paginationButtons = getPaginationButtons(response['paginationButtons']);
             drawGrid(_gridxId, headerArea, tableBodyArea, paginationButtons, _tableOptions);
             $("#" + _gridxId + '_paginationInfo').html(response['paginationInfo']);
+            $("#" + _gridxId + '_filterContent').html(response['filterContent']);
            // window.location = "?page=" + queryParams.page + "&offset=" + queryParams.offset;
-            window.history.pushState(null, null, _url + "?page=" + queryParams.page + "&offset=" + queryParams.offset
-            + '&sort[d1]=' + queryParams.sort['d1']);
+         //   console.log(baseUrl);
+
+          //  var  u = encodeURI(_url + "?page=" + queryParams.page + "&offset=" + queryParams.offset);
+            //    + '&sort[d1]=' + queryParams.sort['d1']  + '&sort[d2]=' + queryParams.sort['d2']);
+            window.history.pushState(null, null, getQueryParamsStr());
+            /*
+                       window.history.pushState(null, null, _url + "?page=" + queryParams.page + "&offset=" + queryPar + queryParams.offset
+                       + '&sort[d1]=' + queryParams.sort['d1']  + '&sort[d2]=' + queryParams.sort['d2']);
+                       */
 
         },
         error: function (jqXHR, error, errorThrown) {
@@ -214,6 +227,102 @@ function refreshGrid() {
 
 
 }
+
+function applyFilter() {
+    let fields = $(".filterData");
+    let empty = true;
+    queryParams.page = 1;
+    queryParams.offset = 0;
+
+    queryParams.filter = {};
+   // console.log(fields);
+    $.each(fields, function () {
+        switch (typeof this.value) {
+            case 'string':
+                empty = this.value.length == 0;
+                break;
+            case 'number':
+                empty = toString(this.value).length == 0;
+                break;
+        }
+       // console.log(this.name + ' = ' + this.value);
+        if (!empty){
+            queryParams.filter[this.name] = this.value;
+        }
+    });
+   // console.log(queryParams.filter);
+    refreshGrid();
+}
+
+function resetFilter() {
+    $(".filterData").val(null);
+    queryParams.filter = {};
+    refreshGrid();
+}
+
+function getQueryParamsStr() {
+    var  u;
+
+    let ret = retP = retF = retS = '';
+ //   console.log(queryParams);
+    if (typeof queryParams.page == 'number' && typeof queryParams.offset == 'number'){
+        retP += 'page=' + queryParams.page + "&offset=" + queryParams.offset ;
+    }
+
+    if (typeof queryParams.filter === 'object'){
+        /*
+        if (ret.length > 0 && !$.isEmptyObject(queryParams.filter)){
+            ret +=  '&';
+        }
+        */
+        $.each(queryParams.filter, function(i, v) {
+            if (retF.length > 0){
+                retF += (retF[0] === '&') ? '' : '&';
+            }
+            retF += 'filter[' + i + ']=' + v;
+
+        })
+    }
+
+    if (typeof queryParams.sort === 'object' ){
+        $.each(queryParams.sort, function(i, v) {
+            if (retS.length > 0){
+                retS += (retS[0] === '&') ? '' : '&';
+            }
+            retS += 'sort[' + i + ']=' + v;
+        })
+    }
+
+    if (retP.length > 0){
+        ret = retP;
+    }
+
+    if (ret.length > 0 && retF.length > 0){
+        ret += '&' + retF;
+    } else {
+        ret += retF;
+    }
+
+    if (ret.length > 0 && retS.length > 0){
+        ret += '&' + retS;
+    } else {
+        ret += retS;
+    }
+
+
+
+    if (ret.length > 0){
+        ret = '?' + ret;
+    }
+
+    u = encodeURI(baseUrl + ret);
+//    console.log(ret);
+//   console.log(u);
+    return u;
+
+}
+
+
 
 
 

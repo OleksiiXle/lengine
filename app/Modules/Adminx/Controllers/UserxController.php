@@ -73,12 +73,8 @@ class UserxController extends MainController
             ]
         ];
 
-        $data = $this->requestx->all();
-        if (isset($data['offset']) && isset($data['page'])){
-            $params['offset'] = $data['offset'];
-            $params['page'] = $data['page'];
-        }
-        $generator = new UserxGenerator($params);
+        $requestParams = $this->requestx->all();
+        $generator = new UserxGenerator($params, $requestParams);
 
         if ($this->requestx->ajax()){
             $ret = $generator->getGridRefreshData();

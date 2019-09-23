@@ -7,9 +7,10 @@ use App\Modules\Adminx\Models\Userx;
 class UserxGenerator
 {
     //------------------------------------------- constructor attributes
-    public $url;
-    public $modelClass;
-    public $filterView;
+    public $gridxId;
+    public $modelClass = '';
+    public $url = '';
+    public $filterView = '';
     public $pagination = 0;
     public $paginationFrame = 6;
     public $tableOptions = [
@@ -23,31 +24,50 @@ class UserxGenerator
         'contentOptions' => ['style' => 'color: black'],
     ];
     public $columns = [];
-    public $gridxId;
 
-    //------------------------------------------ request attributes
-    public $requestType = 'normal';  // normal or ajax
+    public $requestParams = [];
+    public $filterData = [];
+    public $paginationData = [];
+
+    //------------------------------------------ pagination attributes
     public $sort = [];
     public $offset = 0;
-    public $limit;
+    public $limit=0;
     public $page = 1;
 
     //------------------------------------------ filter attributes
-    public $filter_name = '';
-    public $filter_email = '';
-    public $query;
+    public $name;
+    public $email;
+
 
     //------------------------------------------ other
     public $totalCount;
+    public $query;
 
 
     //------------------------------------------ getters
   //  public $header;
   //  public $filter;
 
-    public function __construct($params)
+    public function __construct($params, $requestParams = [])
     {
         $r = 1;
+        $this->loadData($params);
+
+        $this->loadData($requestParams);
+
+        if ( (isset($requestParams['filter']))){
+            $this->loadData($requestParams['filter']);
+        }
+
+        if ( (isset($requestParams['sort']))){
+            $this->loadData($requestParams['sort']);
+        }
+     //  $this->loadData($this->paginationData);
+    //    $this->loadData($this->filterData);
+
+        //------------------------------------------------------------------------------------------------ grid configs
+        /*
         $this->gridxId = $params['gridxId'];
         $this->modelClass = $params['modelClass'];
         $this->url = $params['url'];
@@ -58,22 +78,46 @@ class UserxGenerator
         $this->rowOptions = (!empty($params['rowOptions'])) ? $params['rowOptions'] : [];
         $this->colOptions = (!empty($params['colOptions'])) ? $params['colOptions'] : [];
         $this->columns = (!empty($params['columns'])) ? $params['columns'] : [];
+        */
 
-        $this->offset = (!empty($params['offset'])) ? $params['offset'] : 0;
-        $this->page = (!empty($params['page'])) ? $params['page'] : 1;
+        //------------------------------------------------------------------------------------------------ grid pagination
+        /*
+        $this->offset = (!empty($requestParams['offset'])) ? $requestParams['offset'] : 0;
+        $this->page = (!empty($requestParams['page'])) ? $requestParams['page'] : 1;
         $this->limit = $this->pagination;
+        */
 
-        $this->query = ($this->modelClass)::query();
-        $this->totalCount = $this->query->count();
+        //------------------------------------------------------------------------------------------------ grid filter
 
+        //------------------------------------------------------------------------------------------------ grid sort
+
+        //------------------------------------------------------------------------------------------------ grid init
+        $this->init();
+    }
+
+    private function loadData($properties){
+        if (!empty($properties)){
+            foreach ($properties as $name => $value) {
+                $this->$name = $value;
+            }
+        }
     }
 
     public function attributeLabels()
     {
         return [
-          'filter_name' => 'Login',
-          'filter_email' => 'Email',
+          'name' => 'Login',
+          'email' => 'Email',
         ];
+    }
+
+    public function init()
+    {
+        $this->limit = $this->pagination;
+        $this->query = ($this->modelClass)::query();
+        $this->getQueryWhere();
+        $this->totalCount = $this->query->count(); //todo *******???????
+
     }
 
     /**
@@ -82,12 +126,12 @@ class UserxGenerator
     public function getQueryWhere()
     {
         $r=1;
-        if (!empty($this->filter_name)) {
-            $this->query->where("name", "LIKE", "%" . $this->filter_name . "%");
+        if (!empty($this->name)) {
+            $this->query->where("name", "LIKE", "%" . $this->name . "%");
         }
 
-        if (!empty($this->filter_email)) {
-            $this->query->where("email", "LIKE", "%$this->filter_email%");
+        if (!empty($this->email)) {
+            $this->query->where("email", "LIKE", "%$this->email%");
         }
 
     }
@@ -98,7 +142,9 @@ class UserxGenerator
      */
     public function getQuery()
     {
-        $this->getQueryWhere();
+       // $this->getQueryWhere();
+     //   $this->query->orderBy('name','asc');
+     //   $this->query->orderBy('email','desc');
 
         if (!empty($this->sort)){
             foreach ($this->sort as $key => $value){
@@ -185,64 +231,66 @@ class UserxGenerator
     public function getPaginateButtons()
     {
         $buttons = [];
+        if ($this->totalCount > 0){
+            $currentPage = $this->page;
+            $pageSize = $this->limit;
+            $pageCount = (int) (($this->totalCount + $pageSize - 1) / $pageSize);;
 
-        $currentPage = $this->page;
-        $pageSize = $this->limit;
-        $pageCount = (int) (($this->totalCount + $pageSize - 1) / $pageSize);;
+            $beginPage = max(0, $currentPage - (int) ($this->paginationFrame / 2));
+            if (($endPage = $beginPage + $this->paginationFrame - 1) >= $pageCount) {
+                $endPage = $pageCount - 1;
+                $beginPage = max(0, $endPage - $this->paginationFrame + 1);
+            }
 
-        $beginPage = max(0, $currentPage - (int) ($this->paginationFrame / 2));
-        if (($endPage = $beginPage + $this->paginationFrame - 1) >= $pageCount) {
-            $endPage = $pageCount - 1;
-            $beginPage = max(0, $endPage - $this->paginationFrame + 1);
-        }
-
-        // first page
-        $buttons [] = [
-            'label' =>'first',
-            'offset' => 0,
-            'page' => 1,
-            'active' => false,
-            'disabled' => $currentPage == 1,
-        ];
-
-        // prev page
-        $buttons [] = [
-            'label' =>'prev',
-            'offset' => ($currentPage > 1) ? ($this->offset - $this->limit) : 0,
-            'page' => ($currentPage > 1) ? ($currentPage -1 ) : 1 ,
-            'active' => false,
-            'disabled' => $currentPage == 1,
-        ];
-
-        // internal pages
-        for ($i = $beginPage; $i <= $endPage; ++$i) {
+            // first page
             $buttons [] = [
-                'label' => ($i + 1),
-                'offset' => $i * $this->limit,
-                'page' => ($i + 1),
-                'active' => ($i == $currentPage - 1),
-                'disabled' => ($i == $currentPage - 1),
+                'label' =>'first',
+                'offset' => 0,
+                'page' => 1,
+                'active' => false,
+                'disabled' => $currentPage == 1,
+            ];
+
+            // prev page
+            $buttons [] = [
+                'label' =>'prev',
+                'offset' => ($currentPage > 1) ? ($this->offset - $this->limit) : 0,
+                'page' => ($currentPage > 1) ? ($currentPage -1 ) : 1 ,
+                'active' => false,
+                'disabled' => $currentPage == 1,
+            ];
+
+            // internal pages
+            for ($i = $beginPage; $i <= $endPage; ++$i) {
+                $buttons [] = [
+                    'label' => ($i + 1),
+                    'offset' => $i * $this->limit,
+                    'page' => ($i + 1),
+                    'active' => ($i == $currentPage - 1),
+                    'disabled' => ($i == $currentPage - 1),
+                ];
+            }
+
+            // next page
+
+            $buttons [] = [
+                'label' =>'next',
+                'offset' => ($currentPage <= $pageCount ) ? $this->offset + $this->limit : $this->totalCount,
+                'page' => ($currentPage <= $pageCount ) ? $currentPage + 1 : $pageCount,
+                'active' => false,
+                'disabled' => $currentPage >= $pageCount,
+            ];
+
+            // last page
+            $buttons [] = [
+                'label' =>'last',
+                'offset' => ($pageCount - 1) * $this->limit,
+                'page' => $pageCount,
+                'active' => false,
+                'disabled' => $currentPage == $pageCount ,
             ];
         }
 
-        // next page
-
-        $buttons [] = [
-            'label' =>'next',
-            'offset' => ($currentPage <= $pageCount ) ? $this->offset + $this->limit : $this->totalCount,
-            'page' => ($currentPage <= $pageCount ) ? $currentPage + 1 : $pageCount,
-            'active' => false,
-            'disabled' => $currentPage >= $pageCount,
-        ];
-
-        // last page
-        $buttons [] = [
-            'label' =>'last',
-            'offset' => ($pageCount - 1) * $this->limit,
-            'page' => $pageCount,
-            'active' => false,
-            'disabled' => $currentPage == $pageCount ,
-        ];
 
         return $buttons;
     }
@@ -254,9 +302,13 @@ class UserxGenerator
      */
     public function getPaginationInfo()
     {
-        $ret = (($this->offset + $this->limit) < $this->totalCount)
-            ? ($this->offset+1) . " - " . ($this->offset + $this->limit) . " (" . $this->totalCount . ")"
-            : ($this->offset+1) . " - " . ($this->totalCount) . " (" . $this->totalCount . ")";
+        if ($this->totalCount > 0){
+            $ret = (($this->offset + $this->limit) < $this->totalCount)
+                ? ($this->offset+1) . " - " . ($this->offset + $this->limit) . " (" . $this->totalCount . ")"
+                : ($this->offset+1) . " - " . ($this->totalCount) . " (" . $this->totalCount . ")";
+        } else {
+            $ret = 0;
+        }
 
         return $ret;
     }
@@ -272,6 +324,7 @@ class UserxGenerator
             'tableBody' => $this->getTableBody(),
             'paginationButtons' => $this->getPaginateButtons(),
             'paginationInfo' => $this->getPaginationInfo(),
+            'filterContent' => $this->getFilterContent(),
         ];
         return $ret;
     }
@@ -284,6 +337,24 @@ class UserxGenerator
      */
     public function getFilterContent()
     {
+        $ret = '';
+        $attrs = $this->attributeLabels();
+
+
+        if (!empty($this->name)) {
+            $ret = ' ' . $attrs['name'] . '=*' . $this->name . '*';
+        }
+
+        if (!empty($this->email)) {
+            $ret .= ' ' . $attrs['email'] . '=*' . $this->email . '*';
+        }
+
+        if (strlen($ret) > 0){
+            $ret = 'Filter:' . $ret;
+        }
+
+        return $ret;
+
 
     }
 

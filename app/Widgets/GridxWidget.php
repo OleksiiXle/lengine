@@ -84,6 +84,7 @@ class GridxWidget  implements ContractWidget
             'tableBody' => $this->generator->getTableBody(),
             'paginationInfo' => $this->generator->getPaginationInfo(),
             'paginationButtons' => $this->generator->getPaginateButtons(),
+            'filterContent' => $this->generator->getFilterContent(),
         ]);
     }
 }

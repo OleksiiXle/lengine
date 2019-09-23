@@ -17,7 +17,7 @@ mix.js('resources/js/appx.js', 'public/js/default.js')
 mix.copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/','public/fonts/bootstrap');
 */
 mix.copy('app/Widgets/Resources/js/gridx.js', 'public/js/gridx.js')
-.copy('app/Widgets/Resources/css/gridx.css', 'public/css/gridx.css');
-
+    .copy('app/Widgets/Resources/css/gridx.css', 'public/css/gridx.css')
+    .version();
 mix.browserSync('lengine.dev');
 

@@ -14,6 +14,7 @@
     var _tableBody = {!! json_encode($tableBody) !!};
     var _paginationInfo = '<?Php echo $paginationInfo;?>' ;
     var _paginationButtons = {!! json_encode($paginationButtons) !!};
+    var _filterContent = '<?Php echo $filterContent;?>' ;
 
 </script>
 <div class="xCard">
@@ -21,6 +22,9 @@
         <div class="col-md-11">
             <span id="{{$gridxId}}_paginationInfo">
                             {{ $paginationInfo }}
+            </span>
+            <span id="{{$gridxId}}_filterContent">
+                            {{ $filterContent }}
             </span>
         </div>
         <div class="col-md-1" align="right">
