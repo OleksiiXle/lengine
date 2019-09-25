@@ -28,3 +28,11 @@ php artisan migrate --path=/app/Modules/Adminx/Migrations
  $icon-font-path: '../fonts/';
  @import "glyphicons";
  Запустите: npm run dist чтобы перекомпилировать ваш код с Glyphicons.
+
+
+npm run watch
+
+authorization
+composer require laravel/ui --dev
+php artisan ui:auth
+php artisan migrate

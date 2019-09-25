@@ -11,6 +11,7 @@ abstract class MainController extends Controller
 
     public function __construct(Request $request)
     {
+        $this->middleware('auth');
         $r=1;
         $this->requestx = $request;
     }
