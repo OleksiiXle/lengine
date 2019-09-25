@@ -2,7 +2,8 @@
 
 namespace App\Modules\Adminx\Models\gridComponent;
 
-use App\Modules\Adminx\Models\Userx;
+use Illuminate\Support\Facades\Validator;
+
 
 class UserxGenerator
 {
@@ -49,6 +50,11 @@ class UserxGenerator
     public $totalCount;
     public $query;
 
+    public $result = [
+        'status' => true,
+        'data' => 'ok',
+    ];
+
 
     //------------------------------------------ getters
   //  public $header;
@@ -56,57 +62,22 @@ class UserxGenerator
 
     public function __construct($params, $requestParams = [])
     {
+        //todo подумать над валидацией всех данных
         $r = 1;
         $this->loadData($params);
+        if ($this->validate($requestParams)){
 
-        $this->loadData($requestParams);
+            $this->loadData($requestParams);
 
-        /*
-        if (!empty($requestParams['page'])){
-            $this->page = $requestParams['page'];
+            if ( (isset($requestParams['filter']))){
+                $this->loadData($requestParams['filter']);
+            }
+
+            if ( (isset($requestParams['sort']))){
+                $this->sort = $requestParams['sort'];
+            }
+
         }
-
-        if (!empty($requestParams['offset'])){
-            $this->offset = $requestParams['offset'];
-        }
-        */
-
-        if ( (isset($requestParams['filter']))){
-            $this->loadData($requestParams['filter']);
-        }
-
-        if ( (isset($requestParams['sort']))){
-            $this->sort = $requestParams['sort'];
-        }
-     //  $this->loadData($this->paginationData);
-    //    $this->loadData($this->filterData);
-
-        //------------------------------------------------------------------------------------------------ grid configs
-        /*
-        $this->gridxId = $params['gridxId'];
-        $this->modelClass = $params['modelClass'];
-        $this->url = $params['url'];
-        $this->filterView = (!empty($params['filterView'])) ? $params['filterView'] : '';
-        $this->pagination = (!empty($params['pagination'])) ? $params['pagination'] : 0;
-        $this->tableOptions = (!empty($params['tableOptions'])) ? $params['tableOptions'] : [];
-        $this->headerOptions = (!empty($params['headerOptions'])) ? $params['headerOptions'] : [];
-        $this->rowOptions = (!empty($params['rowOptions'])) ? $params['rowOptions'] : [];
-        $this->colOptions = (!empty($params['colOptions'])) ? $params['colOptions'] : [];
-        $this->columns = (!empty($params['columns'])) ? $params['columns'] : [];
-        */
-
-        //------------------------------------------------------------------------------------------------ grid pagination
-        /*
-        $this->offset = (!empty($requestParams['offset'])) ? $requestParams['offset'] : 0;
-        $this->page = (!empty($requestParams['page'])) ? $requestParams['page'] : 1;
-        $this->limit = $this->pagination;
-        */
-
-        //------------------------------------------------------------------------------------------------ grid filter
-
-        //------------------------------------------------------------------------------------------------ grid sort
-
-        //------------------------------------------------------------------------------------------------ grid init
         $this->init();
     }
 
@@ -116,6 +87,39 @@ class UserxGenerator
                 $this->$name = $value;
             }
         }
+    }
+
+    public function rules()
+    {
+        return [
+           // 'name' => 'required|max:2',
+            'name' => 'min:2|max:255|alpha_dash',
+            'email' => 'min:2|max:255|email',
+        ];
+    }
+
+    public function validate($requestParams)
+    {
+        $t=1;
+        if (!empty($requestParams['filter'])){
+            $validator = Validator::make($requestParams['filter'], $this->rules());
+            if ($validator->fails()) {
+                $r=1;
+                $this->result = [
+                    'status' => false,
+                    'data' => $validator->errors()->messages(),
+                ];
+                return false;
+            } else {
+                $this->result = [
+                    'status' => true,
+                    'data' => 'ok',
+                ];
+            }
+        }
+        return true;
+
+
     }
 
     public function attributeLabels()
@@ -129,8 +133,14 @@ class UserxGenerator
     public function init()
     {
         $this->limit = $this->pagination;
-        $this->query = ($this->modelClass)::query();
-        $this->getQueryWhere();
+        if ($this->result['status']){
+            $this->query = ($this->modelClass)::query();
+            $this->getQueryWhere();
+        } else {
+            $model = new $this->modelClass;
+            $this->query = ($this->modelClass)::query()->where($model->getTable() . '.id');
+
+        }
         $this->totalCount = $this->query->count(); //todo *******???????
 
     }
@@ -336,13 +346,27 @@ class UserxGenerator
      */
     function getGridRefreshData()
     {
-        $ret = [
-            'tableBody' => $this->getTableBody(),
-            'paginationButtons' => $this->getPaginateButtons(),
-            'paginationInfo' => $this->getPaginationInfo(),
-            'filterContent' => $this->getFilterContent(),
-        ];
-        return $ret;
+        $r=1;
+        if ($this->result['status']){
+            $this->result = [
+                'status' => false,
+                'data' => 'error',
+            ];
+            try{
+                $this->result = [
+                    'status' => true,
+                    'data' =>  [
+                        'tableBody' => $this->getTableBody(),
+                        'paginationButtons' => $this->getPaginateButtons(),
+                        'paginationInfo' => $this->getPaginationInfo(),
+                        'filterContent' => $this->getFilterContent(),
+                    ]
+                ];
+            } catch (\Exception $e){
+                $this->result['data'] = $e->getMessage();
+            }
+        }
+        return $this->result;
     }
 
 

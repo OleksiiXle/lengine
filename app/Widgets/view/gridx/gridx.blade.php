@@ -18,6 +18,18 @@
 </script>
 <div class="xCard">
     <div class="row">
+        <div class="col-md-12">
+            <div id="{{$gridxId}}_errors" style="color: red;">
+                <?php foreach ($gridErrors as $error):?>
+                <?php foreach ($error as $message):?>
+                         <b>{{$message}}</b><br>
+                <?php endforeach;?>
+                <?php endforeach;?>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-11">
             <span id="{{$gridxId}}_paginationInfo">
                             {{ $paginationInfo }}
@@ -34,7 +46,7 @@
 
     </div>
     <div class="row">
-        <div class="col-md-12" style="display: none" id="filterZone">
+        <div class="col-md-12" style="{{ (empty($gridErrors)) ? 'display: none' : '' }}" id="filterZone">
             @include( $filterView )
         </div>
     </div>

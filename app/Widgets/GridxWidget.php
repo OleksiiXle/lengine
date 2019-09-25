@@ -34,6 +34,8 @@ class GridxWidget  implements ContractWidget
     public $headerClass;
     public $headerStyle;
 
+    public $gridErrors;
+
 
 
     /**
@@ -80,6 +82,12 @@ class GridxWidget  implements ContractWidget
         if ($this->id === null) {
             $this->id = 'x' . static::$counter++;
         }
+
+        $this->gridErrors = (!$this->generator->result['status'])
+        ? $this->generator->result['data']
+        : [];
+
+
         $this->init();
     }
 
@@ -111,6 +119,8 @@ class GridxWidget  implements ContractWidget
             'tableStyle' => $this->tableStyle,
             'headerClass' => $this->headerClass,
             'headerStyle' => $this->headerStyle,
+
+            'gridErrors' => $this->gridErrors,
 
 
         ]);

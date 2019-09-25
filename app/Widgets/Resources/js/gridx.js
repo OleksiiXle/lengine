@@ -219,14 +219,31 @@ function refreshGrid() {
         url: baseUrl,
         data: queryParams,
         success: function (response) {
-           // console.log(response);
-            tableBodyArea = getTableBody(_rowOptions, _colOptions, response['tableBody'], columnOptions);
-            paginationButtons = getPaginationButtons(response['paginationButtons']);
-            $("#" + _gridxId + "_tableBody").html(tableBodyArea);
-            $("#" + _gridxId + "_paginationButtons").html(paginationButtons);
-            $("#" + _gridxId + '_paginationInfo').html(response['paginationInfo']);
-            $("#" + _gridxId + '_filterContent').html(response['filterContent']);
-            window.history.pushState(null, null, getQueryParamsStr());
+            console.log(response);
+            if (response['status']){
+                console.log('ok');
+                tableBodyArea = getTableBody(_rowOptions, _colOptions, response['data']['tableBody'], columnOptions);
+                paginationButtons = getPaginationButtons(response['data']['paginationButtons']);
+                $("#" + _gridxId + "_tableBody").html(tableBodyArea);
+                $("#" + _gridxId + "_paginationButtons").html(paginationButtons);
+                $("#" + _gridxId + '_paginationInfo').html(response['data']['paginationInfo']);
+                $("#" + _gridxId + '_filterContent').html(response['data']['filterContent']);
+                $("#" + _gridxId + "_errors").html('');
+
+                window.history.pushState(null, null, getQueryParamsStr());
+            } else {
+                let errMessage = '';
+                $.each(response['data'], function (i,v) {
+                    $.each(v, function (v, message) {
+                        errMessage += '<b>' + message + '</b><br>' ;
+
+                    });
+
+                });
+                $("#" + _gridxId + "_errors").html(errMessage);
+
+                console.log(response['data']);
+            }
         },
         error: function (jqXHR, error, errorThrown) {
             console.log(jqXHR);
