@@ -29,21 +29,6 @@
                             <input type="text" name="email" id="userx-email" class="form-control" value="{{$user->email }}">
                             <p class="help-block-error"></p>
                         </div>
-                        <div>
-                            <b>lokoko</b>
-                            <?php
-                            //echo app('widget')->widget('activeFieldx', ['attribute' => 'email']);
-                            $form = app('widget')->widget('activeFormx', ['model' => $user, 'options' =>[]]);
-                            echo $form->textInput('name',[
-                                'inputOptions' => [
-                                  'class' => 'xCard',
-                                  'style' => 'color: blue;',
-                                  'disabled',
-                                ],
-                            ]);
-                            ?>
-                        </div>
-
                     </div>
                 </div>
                 <!-- Forms buttons -->

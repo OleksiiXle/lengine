@@ -8,10 +8,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>AdminPanel Layout</title>
-    <link href="{{ asset('css/default.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/adminx.css') }}" rel="stylesheet" />
 
-    <script src="{{ asset('js/default.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/adminxCommon.js') }}"></script>
 
 </head>
 <body id="app-layout">
@@ -25,7 +26,7 @@
             <!--
             <a href="/adminxx" title="На гоговну сторінку">
                  <span class ="img-rounded">
-                        <img  src="<?=\yii\helpers\Url::to('@web/images/np_logo.png');?>" height="40px" width="40px;">
+                        <img  src="" height="40px" width="40px;">
                  </span>
             </a>
             <button id="open-menu-btn" onclick="showMenu();" class="xMenuBtn" >
@@ -43,33 +44,9 @@
         </div>
     </div>
     <!--************************************************************************************************************* CONTENT-->
-
-
-
+    @include('Adminx::layouts.flash_message')
+    {{ csrf_field() }}
+    @yield('content')
 </div>
-
-
-
-
-
-
-
-
-<nav class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-
-            <!-- Branding Image -->
-            <a class="navbar-brand" href="{{ url('/') }}">
-                Users List
-            </a>
-
-        </div>
-    </div>
-</nav>
-@include('Adminx::layouts.flash_message')
-{{ csrf_field() }}
-@yield('content')
-
 </body>
 </html>

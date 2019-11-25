@@ -46,6 +46,13 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        /*
+        'xle' => [
+            'driver' => 'sessionx',
+            'provider' => 'usersx',
+        ],
+        */
+
     ],
 
     /*
@@ -70,6 +77,12 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
+        /*
+        'xle' => [
+            'driver' => 'xle',
+            'model' => App\User::class,
+        ],
+        */
 
         // 'users' => [
         //     'driver' => 'database',

@@ -5,5 +5,6 @@
  */
 return [
     'gridx' => 'App\Widgets\GridxWidget',
+    'activeFormx' => 'App\Widgets\ActiveFormxWidget',
     //'slider' => 'App\Widgets\SliderWidget',
 ];

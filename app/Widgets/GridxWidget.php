@@ -125,4 +125,39 @@ class GridxWidget  implements ContractWidget
 
         ]);
     }
+
+    public function __toString()
+    {
+        try {
+            $ret =  view('Widgets::gridx.gridx', [
+                'id' => $this->id,
+                'gridxId' => $this->generator->gridxId,
+                'modelClass' => $this->generator->modelClass,
+                'filterView' => $this->generator->filterView,
+                'pagination' => $this->generator->pagination,
+                'rowOptions' => $this->generator->rowOptions,
+                'colOptions' => $this->generator->colOptions,
+                'columns' => $this->generator->columns,
+                'header' => $this->generator->getHeader(),
+                'filter' => $this->generator->getFilter(),
+                'tableBody' => $this->generator->getTableBody(),
+                'paginationInfo' => $this->generator->getPaginationInfo(),
+                'paginationButtons' => $this->generator->getPaginateButtons(),
+                'filterContent' => $this->generator->getFilterContent(),
+                'sortOptions' => $this->generator->sortOptions,
+                'sort' => $this->generator->sort,
+
+                'tableClass' => $this->tableClass,
+                'tableStyle' => $this->tableStyle,
+                'headerClass' => $this->headerClass,
+                'headerStyle' => $this->headerStyle,
+
+                'gridErrors' => $this->gridErrors,
+            ]);
+            return $ret->render();
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
 }

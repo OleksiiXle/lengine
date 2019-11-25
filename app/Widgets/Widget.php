@@ -22,4 +22,14 @@ class Widget
             return $obj->execute();
         }
     }
+
+    public function widget($obj, $data =[])
+    {
+        $e=1;
+        if(isset($this->widgets[$obj])){
+            $obj = App::make($this->widgets[$obj], $data);
+            return $obj;
+        }
+
+    }
 }

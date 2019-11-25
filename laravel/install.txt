@@ -36,3 +36,6 @@ authorization
 composer require laravel/ui --dev
 php artisan ui:auth
 php artisan migrate
+
+
+php artisan event:generate

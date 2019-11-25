@@ -40,6 +40,12 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    protected function redirectTo()
+    {
+        $r = session('link');
+        return $r;
+    }
+
     /**
      * Get the login username to be used by the controller.
      *
@@ -92,6 +98,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validateLogin($request);
+        $r=1;
 
         /*
          If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -138,6 +145,26 @@ class LoginController extends Controller
     protected function credentials(Request $request)
     {
         return $request->only($this->username(), 'password');
+    }
+
+    public function showLoginForm()
+    {
+        if (session('link')) {
+            $myPath     = session('link');
+            $loginPath  = url('/login');
+            $previous   = url()->previous();
+            if ($previous == $loginPath) {
+                session(['link' => $myPath]);
+            }
+            else{
+                session(['link' => $previous]);
+            }
+        }
+        else{
+            session(['link' => url()->previous()]);
+        }
+
+        return view('auth.login');
     }
 
 
